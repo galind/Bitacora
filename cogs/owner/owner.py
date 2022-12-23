@@ -71,6 +71,7 @@ class Owner(commands.Cog):
             guild = None
         elif target == 'guild':
             guild = ctx.guild
+            self.bot.tree.copy_global_to(guild=guild)
         else:
             return await ctx.send(
                 'You need to specify the sync target',
