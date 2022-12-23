@@ -10,7 +10,9 @@ Economy system and multi-purpose Discord integration.
 
 log = logging.getLogger(__name__)
 
-initial_extensions = ()
+initial_extensions = (
+    'cogs.owner',
+)
 
 
 class Bitacora(commands.Bot):
