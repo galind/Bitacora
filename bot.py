@@ -2,6 +2,8 @@ from discord.ext import commands
 import discord
 import logging
 
+from cogs.utils import files
+
 import config
 
 description = """
@@ -10,9 +12,7 @@ Economy system and multi-purpose Discord integration.
 
 log = logging.getLogger(__name__)
 
-initial_extensions = (
-    'cogs.owner',
-)
+initial_extensions = files.get_initial_extensions()
 
 
 class Bitacora(commands.Bot):
