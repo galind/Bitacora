@@ -1,9 +1,9 @@
 from discord.ext import commands
 import discord
 import logging
+from motor import motor_asyncio
 
 from cogs.utils import files
-
 import config
 
 description = """
@@ -26,6 +26,8 @@ class Bitacora(commands.Bot):
             enable_debug_events=True,
         )
 
+        client = motor_asyncio.AsyncIOMotorClient('localhost', 27017)
+        self.database = client['bitacora']
         self.guild_id = config.guild_id
         self.logs_webhook = config.logs_webhook
 
