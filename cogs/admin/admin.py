@@ -16,7 +16,7 @@ class Admin(commands.GroupCog, group_name='admin'):
     @app_commands.command(name='cooldown')
     @app_commands.describe(seconds='Set it to 0 for no cooldown')
     async def cooldown(self, interaction: discord.Interaction, seconds: int):
-        """Set the cooldown between currency reactions"""
+        """Set the cooldown between reactions"""
 
     @app_commands.command(name='emoji')
     async def emoji(self, interaction: discord.Interaction):
