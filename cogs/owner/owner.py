@@ -13,7 +13,7 @@ class Owner(commands.Cog):
     async def cog_check(self, ctx: commands.Context) -> bool:
         return await self.bot.is_owner(ctx.author)
 
-    @commands.command(hidden=True)
+    @commands.command(name='load', hidden=True)
     async def load(self, ctx: commands.Context, module: str):
         """Loads a module."""
         try:
@@ -30,7 +30,7 @@ class Owner(commands.Cog):
             )
         await ctx.message.delete(delay=self.delay)
 
-    @commands.command(hidden=True)
+    @commands.command(name='unload', hidden=True)
     async def unload(self, ctx: commands.Context, module: str):
         """Unloads a module."""
         try:
@@ -47,7 +47,7 @@ class Owner(commands.Cog):
             )
         await ctx.message.delete(delay=self.delay)
 
-    @commands.command(hidden=True)
+    @commands.command(name='reload', hidden=True)
     async def reload(self, ctx: commands.Context, module: str):
         """Reloads a module."""
         try:
@@ -64,7 +64,7 @@ class Owner(commands.Cog):
             )
         await ctx.message.delete(delay=self.delay)
 
-    @commands.command(hidden=True)
+    @commands.command(name='sync', hidden=True)
     async def sync(self, ctx: commands.Context, target: str):
         """Syncs the slash commands."""
         if target == 'global':
