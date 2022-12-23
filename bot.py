@@ -27,6 +27,7 @@ class Bitacora(commands.Bot):
         )
 
         self.guild_id = config.guild_id
+        self.logs_webhook = config.logs_webhook
 
     async def setup_hook(self) -> None:
         self.bot_app_info = await self.application_info()
@@ -42,6 +43,9 @@ class Bitacora(commands.Bot):
         return self.bot_app_info.owner
 
     async def on_ready(self) -> None:
+        if not hasattr(self, 'uptime'):
+            self.uptime = discord.utils.utcnow()
+
         log.info(f'Ready: {self.user} (ID: {self.user.id})')
 
     async def start(self) -> None:
