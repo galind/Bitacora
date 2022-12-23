@@ -20,11 +20,13 @@ class Owner(commands.Cog):
             await self.bot.load_extension(f'cogs.{module}')
         except commands.ExtensionError as e:
             await ctx.send(
-                f'{e.__class__.__name__}: {e}', delete_after=self.delay
+                f'{e.__class__.__name__}: {e}',
+                delete_after=self.delay
             )
         else:
             await ctx.send(
-                f'Module \'{module}\' loaded.', delete_after=self.delay
+                f'Module \'{module}\' loaded.',
+                delete_after=self.delay
             )
         await ctx.message.delete(delay=self.delay)
 
@@ -35,11 +37,13 @@ class Owner(commands.Cog):
             await self.bot.unload_extension(f'cogs.{module}')
         except commands.ExtensionError as e:
             await ctx.send(
-                f'{e.__class__.__name__}: {e}', delete_after=self.delay
+                f'{e.__class__.__name__}: {e}',
+                delete_after=self.delay
             )
         else:
             await ctx.send(
-                f'Module \'{module}\' unloaded.', delete_after=self.delay
+                f'Module \'{module}\' unloaded.',
+                delete_after=self.delay
             )
         await ctx.message.delete(delay=self.delay)
 
@@ -50,10 +54,32 @@ class Owner(commands.Cog):
             await self.bot.reload_extension(f'cogs.{module}')
         except commands.ExtensionError as e:
             await ctx.send(
-                f'{e.__class__.__name__}: {e}', delete_after=self.delay
+                f'{e.__class__.__name__}: {e}',
+                delete_after=self.delay
             )
         else:
             await ctx.send(
-                f'Module \'{module}\' reloaded.', delete_after=self.delay
+                f'Module \'{module}\' reloaded.',
+                delete_after=self.delay
             )
+        await ctx.message.delete(delay=self.delay)
+
+    @commands.command(hidden=True)
+    async def sync(self, ctx: commands.Context, target: str):
+        """Syncs the slash commands."""
+        if target == 'global':
+            guild = None
+        elif target == 'guild':
+            guild = ctx.guild
+        else:
+            return await ctx.send(
+                'You need to specify the sync target',
+                delete_after=self.delay
+            )
+
+        commands = await self.bot.tree.sync(guild=guild)
+        await ctx.send(
+            f'Successfully synced {len(commands)} commands',
+            delete_after=self.delay
+        )
         await ctx.message.delete(delay=self.delay)
