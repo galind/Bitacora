@@ -2,10 +2,12 @@ import os
 
 folder_path = os.getcwd()
 
+ignored_extensions = ['utils']
+
 
 def get_initial_extensions():
-    modules = []
-    for folder in os.listdir(f'{folder_path}/cogs/'):
-        if folder != 'utils':
-            modules.append(f'cogs.{folder}')
-    return modules
+    extensions_list = []
+    for extension in os.listdir(f'{folder_path}/cogs/'):
+        if extension not in ignored_extensions:
+            extensions_list.append(f'cogs.{extension}')
+    return extensions_list
