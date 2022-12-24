@@ -81,26 +81,39 @@ class Admin(commands.GroupCog, group_name='admin'):
             content = 'Logs have been disabled'
         await interaction.response.send_message(content, ephemeral=True)
 
+    def view_embed(self, guild_name: str, guild_settings: dict):
+        embed = discord.Embed(title=guild_name, color=self.bot.color)
+        embed.set_footer(
+            text=self.bot.footer,
+            icon_url=self.bot.user.avatar
+        )
+
+        cooldown = guild_settings.get('cooldown', None)
+        if cooldown:
+            cooldown = f'{cooldown} seconds'
+        else:
+            cooldown = 'Not configured'
+        embed.add_field(name='Cooldown', value=cooldown, inline=False)
+
+        emoji = guild_settings.get('emoji', 'Not configured')
+        embed.add_field(name='Emoji', value=emoji, inline=False)
+
+        logs = guild_settings.get('logs', None)
+        if logs is True:
+            logs = 'Enabled'
+        elif logs is False:
+            logs = 'Disabled'
+        else:
+            logs = 'Not configured'
+        embed.add_field(name='Logs', value=logs, inline=False)
+
+        return embed
+
     @app_commands.command(name='view')
     async def view(self, interaction: discord.Interaction):
         """View server settings"""
         guild = mongo.Guilds(interaction.guild_id)
         guild_settings = await guild.check_guild()
 
-        embed = discord.Embed(
-            title=interaction.guild.name,
-            color=self.bot.color
-        )
-        embed.set_footer(
-            text=self.bot.footer,
-            icon_url=self.bot.user.avatar
-        )
-        settings_list = ['cooldown', 'emoji', 'logs']
-        for name in settings_list:
-            value = guild_settings.get(name, 'Not configured')
-            embed.add_field(
-                name=name.upper(),
-                value=value,
-                inline=False
-            )
+        embed = self.view_embed(interaction.guild.name, guild_settings)
         await interaction.response.send_message(embed=embed, ephemeral=True)
