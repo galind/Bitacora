@@ -29,6 +29,7 @@ class Bitacora(commands.Bot):
         client = motor_asyncio.AsyncIOMotorClient('localhost', 27017)
         self.database = client['bitacora']
         self.color = 0xFF0000
+        self.footer = 'BITACORA.GG'
         self.guild_id = config.guild_id
         self.logs_webhook = config.logs_webhook
 
