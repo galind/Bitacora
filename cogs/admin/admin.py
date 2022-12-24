@@ -24,12 +24,11 @@ class Admin(commands.GroupCog, group_name='admin'):
     async def cooldown(self, interaction: discord.Interaction, seconds: int):
         """Set the cooldown between reactions"""
         guild = mongo.Guilds(interaction.guild_id)
-        try:
-            await guild.update_guild('cooldown', seconds)
-            content = f'Cooldown has been updated to {seconds} seconds'
-        except Exception:
-            content = 'Something has failed'
-        await interaction.response.send_message(content, ephemeral=True)
+        await guild.update_guild('cooldown', seconds)
+        await interaction.response.send_message(
+            f'Cooldown has been updated to {seconds} seconds',
+            ephemeral=True
+        )
 
     @app_commands.command(name='emoji')
     async def emoji(self, interaction: discord.Interaction):
@@ -42,7 +41,7 @@ class Admin(commands.GroupCog, group_name='admin'):
                 'or use a custom emoji from your server. You have '
                 '90 seconds before this message auto-deletes.'
             ),
-            color=0xFF0000
+            color=self.bot.color
         )
         message = await interaction.channel.send(embed=embed)
 
@@ -64,10 +63,24 @@ class Admin(commands.GroupCog, group_name='admin'):
 
         emoji = str(reaction[0])
         guild = mongo.Guilds(interaction.guild_id)
-        try:
-            await guild.update_guild('emoji', emoji)
-            content = f'Emoji has been updated to {emoji}'
-        except Exception:
-            content = 'Something has failed'
+        await guild.update_guild('emoji', emoji)
         await message.delete()
-        await interaction.followup.send(content)
+        await interaction.followup.send(f'Emoji has been updated to {emoji}')
+
+    @app_commands.command(name='logs')
+    async def logs(self, interaction: discord.Interaction):
+        """Enable/disable receiving event notifications"""
+        guild = mongo.Guilds(interaction.guild_id)
+        guild_config = await guild.check_guild()
+
+        if 'logs' in guild_config:
+            logs = not guild_config['logs']
+        else:
+            logs = False
+
+        await guild.update_guild('logs', logs)
+        if logs:
+            content = 'Logs have been enabled'
+        else:
+            content = 'Logs have been disabled'
+        await interaction.response.send_message(content, ephemeral=True)
