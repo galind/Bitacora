@@ -24,7 +24,7 @@ class Admin(commands.GroupCog, group_name='admin'):
     async def cooldown(self, interaction: discord.Interaction, seconds: int):
         """Set the cooldown between reactions"""
         guild = mongo.Guilds(interaction.guild_id)
-        await guild.update_guild('cooldown', seconds)
+        await guild.update_guild({'cooldown': seconds})
         await interaction.response.send_message(
             f'Cooldown has been updated to {seconds} seconds',
             ephemeral=True
@@ -63,7 +63,7 @@ class Admin(commands.GroupCog, group_name='admin'):
 
         emoji = str(reaction[0])
         guild = mongo.Guilds(interaction.guild_id)
-        await guild.update_guild('emoji', emoji)
+        await guild.update_guild({'emoji': emoji})
         await message.delete()
         await interaction.followup.send(f'Emoji has been updated to {emoji}')
 
@@ -74,7 +74,7 @@ class Admin(commands.GroupCog, group_name='admin'):
         guild_settings = await guild.check_guild()
 
         logs = not guild_settings.get('logs', False)
-        await guild.update_guild('logs', logs)
+        await guild.update_guild({'logs': logs})
         if logs:
             content = 'Logs have been enabled'
         else:
