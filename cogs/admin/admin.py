@@ -73,14 +73,34 @@ class Admin(commands.GroupCog, group_name='admin'):
         guild = mongo.Guilds(interaction.guild_id)
         guild_config = await guild.check_guild()
 
-        if 'logs' in guild_config:
-            logs = not guild_config['logs']
-        else:
-            logs = False
-
+        logs = not guild_config.get('logs', False)
         await guild.update_guild('logs', logs)
         if logs:
             content = 'Logs have been enabled'
         else:
             content = 'Logs have been disabled'
         await interaction.response.send_message(content, ephemeral=True)
+
+    @app_commands.command(name='view')
+    async def view(self, interaction: discord.Interaction):
+        """View server settings"""
+        guild = mongo.Guilds(interaction.guild_id)
+        guild_config = await guild.check_guild()
+
+        embed = discord.Embed(
+            title=interaction.guild.name,
+            color=self.bot.color
+        )
+        embed.set_footer(
+            text=self.bot.footer,
+            icon_url=self.bot.user.avatar
+        )
+        settings_list = ['cooldown', 'emoji', 'logs']
+        for name in settings_list:
+            value = guild_config.get(name, 'Not configured')
+            embed.add_field(
+                name=name.upper(),
+                value=value,
+                inline=False
+            )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
