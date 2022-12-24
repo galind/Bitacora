@@ -71,9 +71,9 @@ class Admin(commands.GroupCog, group_name='admin'):
     async def logs(self, interaction: discord.Interaction):
         """Enable/disable receiving event notifications"""
         guild = mongo.Guilds(interaction.guild_id)
-        guild_config = await guild.check_guild()
+        guild_settings = await guild.check_guild()
 
-        logs = not guild_config.get('logs', False)
+        logs = not guild_settings.get('logs', False)
         await guild.update_guild('logs', logs)
         if logs:
             content = 'Logs have been enabled'
@@ -85,7 +85,7 @@ class Admin(commands.GroupCog, group_name='admin'):
     async def view(self, interaction: discord.Interaction):
         """View server settings"""
         guild = mongo.Guilds(interaction.guild_id)
-        guild_config = await guild.check_guild()
+        guild_settings = await guild.check_guild()
 
         embed = discord.Embed(
             title=interaction.guild.name,
@@ -97,7 +97,7 @@ class Admin(commands.GroupCog, group_name='admin'):
         )
         settings_list = ['cooldown', 'emoji', 'logs']
         for name in settings_list:
-            value = guild_config.get(name, 'Not configured')
+            value = guild_settings.get(name, 'Not configured')
             embed.add_field(
                 name=name.upper(),
                 value=value,

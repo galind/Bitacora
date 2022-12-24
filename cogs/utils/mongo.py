@@ -18,11 +18,11 @@ class Guilds:
         return await self.guild.find_one(self.query)
 
     async def check_guild(self) -> dict:
-        guild_config = await self.find_guild()
-        if not guild_config:
+        guild_settings = await self.find_guild()
+        if not guild_settings:
             await self.new_guild()
-            guild_config = await self.find_guild()
-        return guild_config
+            guild_settings = await self.find_guild()
+        return guild_settings
 
     async def update_guild(self, key, value) -> None:
         set_query = {'$set': {key: value}}
