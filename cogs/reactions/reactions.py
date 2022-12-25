@@ -67,6 +67,7 @@ class Reactions(commands.Cog):
         embed = discord.Embed(
             title='New Reaction', color=self.bot.color
         )
+
         embed.add_field(name='Emoji', value=emoji, inline=False)
         embed.add_field(
             name='Sender', value=f'<@{sender_id}>', inline=False
@@ -74,6 +75,7 @@ class Reactions(commands.Cog):
         embed.add_field(
             name='Receiver', value=f'<@{receiver_id}>', inline=False
         )
+
         return embed
 
     @commands.Cog.listener(name='on_raw_reaction_add')
