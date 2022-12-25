@@ -120,7 +120,3 @@ class Reactions(commands.Cog):
             payload.emoji.name, sender_info['_id'], receiver_info['_id']
         )
         await channel.send(embed=embed)
-
-    @commands.Cog.listener(name='on_raw_reaction_remove')
-    async def reaction_remove(self, payload: discord.RawReactionActionEvent):
-        pass
