@@ -3,6 +3,7 @@ from discord import app_commands
 import discord
 import asyncio
 import importlib
+from typing import Optional
 
 from cogs.utils import mongo
 from bot import Bitacora
@@ -45,7 +46,9 @@ class Admin(commands.GroupCog, group_name='admin'):
         )
         message = await interaction.channel.send(embed=embed)
 
-        def check(reaction: discord.Reaction, user: discord.User):
+        def check(
+            reaction: discord.Reaction, user: discord.User
+        ) -> Optional[discord.Reaction]:
             if (
                 user.id == interaction.user.id and
                 message.id == reaction.message.id
@@ -81,7 +84,9 @@ class Admin(commands.GroupCog, group_name='admin'):
             content = 'Logs have been disabled'
         await interaction.response.send_message(content, ephemeral=True)
 
-    def view_embed(self, guild_name: str, guild_settings: dict):
+    def view_embed(
+        self, guild_name: str, guild_settings: dict
+    ) -> discord.Embed:
         embed = discord.Embed(title=guild_name, color=self.bot.color)
         embed.set_footer(
             text=self.bot.footer,
