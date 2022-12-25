@@ -6,7 +6,7 @@ bot = Bitacora()
 database = bot.database
 
 
-class Guilds:
+class Guild:
     def __init__(self, guild: int):
         self.guild = database[str(guild)]
         self.query = {'_id': 'config'}
@@ -29,7 +29,7 @@ class Guilds:
         await self.guild.update_one(self.query, set_query, upsert=True)
 
 
-class Users:
+class User:
     def __init__(self, guild: int, user: int):
         self.guild = database[str(guild)]
         self.query = {'_id': user}

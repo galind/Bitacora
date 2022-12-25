@@ -80,14 +80,14 @@ class Reactions(commands.Cog):
 
     @commands.Cog.listener(name='on_raw_reaction_add')
     async def reaction_add(self, payload: discord.RawReactionActionEvent):
-        guild = mongo.Guilds(payload.guild_id)
+        guild = mongo.Guild(payload.guild_id)
         guild_config = await guild.check_guild()
 
         emoji = guild_config.get('emoji', None)
         if payload.emoji.name != emoji:
             return
 
-        sender = mongo.Users(payload.guild_id, payload.user_id)
+        sender = mongo.User(payload.guild_id, payload.user_id)
         sender_info = await sender.check_user()
 
         cooldown = guild_config.get('cooldown', 0)
@@ -101,7 +101,7 @@ class Reactions(commands.Cog):
         receiver_id = await self.find_receiver(
             payload.channel_id, payload.message_id
         )
-        receiver = mongo.Users(payload.guild_id, receiver_id)
+        receiver = mongo.User(payload.guild_id, receiver_id)
         receiver_info = await receiver.check_user()
 
         if sender_info['_id'] == receiver_info['_id']:
