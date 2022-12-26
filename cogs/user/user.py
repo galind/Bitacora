@@ -10,12 +10,12 @@ class User(commands.Cog):
     def __init__(self, bot: Bitacora):
         self.bot = bot
 
-    @app_commands.command(name='balance')
+    @app_commands.command(name='wallet')
     async def balance(self, interaction: discord.Interaction):
-        """Check your coin balance"""
+        """How many coins do you have in the wallet?"""
         user = mongo.User(interaction.guild_id, interaction.user.id)
         user_info = await user.check_user()
         balance = user_info.get('balance', 0)
         await interaction.response.send_message(
-            f'Your balance is {balance} coins', ephemeral=True
+            f'You have {balance} coins in the wallet', ephemeral=True
         )
