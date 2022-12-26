@@ -12,8 +12,6 @@ from bot import Bitacora
 @app_commands.guild_only()
 @app_commands.default_permissions(administrator=True)
 class Admin(commands.GroupCog, group_name='admin'):
-    """Admin-only commands to configure settings"""
-
     def __init__(self, bot: Bitacora):
         self.bot = bot
 

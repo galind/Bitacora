@@ -4,8 +4,6 @@ from bot import Bitacora
 
 
 class Owner(commands.Cog):
-    """Owner-only commands to manage the extensions"""
-
     def __init__(self, bot: Bitacora):
         self.bot = bot
         self.delay = 10  # Seconds to wait to delete a message

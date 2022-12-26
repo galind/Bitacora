@@ -7,8 +7,6 @@ from bot import Bitacora
 
 
 class Reactions(commands.Cog):
-    """Users can give coins to others by reacting to a message"""
-
     def __init__(self, bot: Bitacora):
         self.bot = bot
 
