@@ -44,7 +44,7 @@ class User(commands.Cog):
     def __init__(self, bot: Bitacora) -> None:
         self.bot = bot
         self.tip_ctx = app_commands.ContextMenu(
-            name='Tip Coins', callback=self.tip
+            name='Tip to user', callback=self.tip
         )
         self.bot.tree.add_command(self.tip_ctx)
 
