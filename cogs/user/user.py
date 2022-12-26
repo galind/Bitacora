@@ -7,10 +7,12 @@ from bot import Bitacora
 
 
 class TipModal(discord.ui.Modal):
-    def __init__(self, sender: mongo.User, receiver: mongo.User) -> None:
+    def __init__(
+        self, sender: mongo.User, receiver: mongo.User, name: str
+    ) -> None:
         self.sender = sender
         self.receiver = receiver
-        super().__init__(title='Tip Coins', timeout=None)
+        super().__init__(title=f'Tip {name}', timeout=None)
 
     quantity = discord.ui.TextInput(
         label='Quantity',
@@ -65,7 +67,7 @@ class User(commands.Cog):
         self, interaction: discord.Interaction, member: discord.Member
     ) -> None:
         """Tip coins to another user"""
-        if interaction.user.id == member.id:
+        if interaction.user.id != member.id:
             return await interaction.response.send_message(
                 'You can\'t tip to yourself', ephemeral=True
             )
@@ -74,5 +76,6 @@ class User(commands.Cog):
         sender = mongo.User(guild_id, interaction.user.id)
         receiver = mongo.User(guild_id, member.id)
 
-        modal = TipModal(sender, receiver)
+        receiver_name = f'{member.name}#{member.discriminator}'
+        modal = TipModal(sender, receiver, receiver_name)
         await interaction.response.send_modal(modal)
