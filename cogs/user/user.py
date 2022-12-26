@@ -52,7 +52,7 @@ class User(commands.Cog):
         self.bot.tree.remove_command(self.tip_ctx.name, type=self.tip_ctx.type)
 
     @app_commands.command(name='wallet')
-    async def balance(self, interaction: discord.Interaction):
+    async def balance(self, interaction: discord.Interaction) -> None:
         """How many coins do you have in the wallet?"""
         user = mongo.User(interaction.guild_id, interaction.user.id)
         user_info = await user.check_user()
@@ -63,7 +63,7 @@ class User(commands.Cog):
 
     async def tip(
         self, interaction: discord.Interaction, member: discord.Member
-    ):
+    ) -> None:
         """Tip coins to another user"""
         if interaction.user.id == member.id:
             return await interaction.response.send_message(

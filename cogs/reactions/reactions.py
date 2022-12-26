@@ -7,7 +7,7 @@ from bot import Bitacora
 
 
 class Reactions(commands.Cog):
-    def __init__(self, bot: Bitacora):
+    def __init__(self, bot: Bitacora) -> None:
         self.bot = bot
 
     async def find_receiver(self, channel_id: int, message_id: int) -> int:
@@ -77,7 +77,9 @@ class Reactions(commands.Cog):
         return embed
 
     @commands.Cog.listener(name='on_raw_reaction_add')
-    async def reaction_add(self, payload: discord.RawReactionActionEvent):
+    async def reaction_add(
+        self, payload: discord.RawReactionActionEvent
+    ) -> None:
         guild = mongo.Guild(payload.guild_id)
         guild_config = await guild.check_guild()
 

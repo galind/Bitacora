@@ -12,7 +12,7 @@ from bot import Bitacora
 @app_commands.guild_only()
 @app_commands.default_permissions(administrator=True)
 class Admin(commands.GroupCog, group_name='admin'):
-    def __init__(self, bot: Bitacora):
+    def __init__(self, bot: Bitacora) -> None:
         self.bot = bot
 
     async def cog_load(self) -> None:
@@ -20,7 +20,9 @@ class Admin(commands.GroupCog, group_name='admin'):
 
     @app_commands.command(name='cooldown')
     @app_commands.describe(seconds='Set it to 0 for no cooldown')
-    async def cooldown(self, interaction: discord.Interaction, seconds: int):
+    async def cooldown(
+        self, interaction: discord.Interaction, seconds: int
+    ) -> None:
         """Set the cooldown between reactions"""
         guild = mongo.Guild(interaction.guild_id)
         await guild.update_guild({'cooldown': seconds})
@@ -30,7 +32,7 @@ class Admin(commands.GroupCog, group_name='admin'):
         )
 
     @app_commands.command(name='emoji')
-    async def emoji(self, interaction: discord.Interaction):
+    async def emoji(self, interaction: discord.Interaction) -> None:
         """Choose the emoji that will act as currency"""
         await interaction.response.defer(ephemeral=True)
         embed = discord.Embed(
@@ -69,7 +71,7 @@ class Admin(commands.GroupCog, group_name='admin'):
         await interaction.followup.send(f'Emoji has been updated to {emoji}')
 
     @app_commands.command(name='logs')
-    async def logs(self, interaction: discord.Interaction):
+    async def logs(self, interaction: discord.Interaction) -> None:
         """Enable/disable receiving event notifications"""
         guild = mongo.Guild(interaction.guild_id)
         guild_settings = await guild.check_guild()
@@ -113,7 +115,7 @@ class Admin(commands.GroupCog, group_name='admin'):
         return embed
 
     @app_commands.command(name='view')
-    async def view(self, interaction: discord.Interaction):
+    async def view(self, interaction: discord.Interaction) -> None:
         """View server settings"""
         guild = mongo.Guild(interaction.guild_id)
         guild_settings = await guild.check_guild()

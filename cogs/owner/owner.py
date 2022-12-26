@@ -4,7 +4,7 @@ from bot import Bitacora
 
 
 class Owner(commands.Cog):
-    def __init__(self, bot: Bitacora):
+    def __init__(self, bot: Bitacora) -> None:
         self.bot = bot
         self.delay = 10  # Seconds to wait to delete a message
 
@@ -12,7 +12,7 @@ class Owner(commands.Cog):
         return await self.bot.is_owner(ctx.author)
 
     @commands.command(name='load', hidden=True)
-    async def load(self, ctx: commands.Context, module: str):
+    async def load(self, ctx: commands.Context, module: str) -> None:
         """Loads a module"""
         try:
             await self.bot.load_extension(f'cogs.{module}')
@@ -29,7 +29,7 @@ class Owner(commands.Cog):
         await ctx.message.delete(delay=self.delay)
 
     @commands.command(name='unload', hidden=True)
-    async def unload(self, ctx: commands.Context, module: str):
+    async def unload(self, ctx: commands.Context, module: str) -> None:
         """Unloads a module"""
         try:
             await self.bot.unload_extension(f'cogs.{module}')
@@ -46,7 +46,7 @@ class Owner(commands.Cog):
         await ctx.message.delete(delay=self.delay)
 
     @commands.command(name='reload', hidden=True)
-    async def reload(self, ctx: commands.Context, module: str):
+    async def reload(self, ctx: commands.Context, module: str) -> None:
         """Reloads a module"""
         try:
             await self.bot.reload_extension(f'cogs.{module}')
@@ -63,7 +63,7 @@ class Owner(commands.Cog):
         await ctx.message.delete(delay=self.delay)
 
     @commands.command(name='sync', hidden=True)
-    async def sync(self, ctx: commands.Context, target: str):
+    async def sync(self, ctx: commands.Context, target: str) -> None:
         """Syncs the slash commands"""
         if target == 'global':
             guild = None
