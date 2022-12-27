@@ -1,6 +1,9 @@
 from discord.ext import commands
+import logging
 
 from bot import Bitacora
+
+log = logging.getLogger(__name__)
 
 
 class Owner(commands.Cog):
@@ -12,54 +15,60 @@ class Owner(commands.Cog):
         return await self.bot.is_owner(ctx.author)
 
     @commands.command(name='load', hidden=True)
-    async def load(self, ctx: commands.Context, module: str) -> None:
-        """Loads a module"""
+    async def load(self, ctx: commands.Context, extension: str) -> None:
+        """Loads a extension"""
         try:
-            await self.bot.load_extension(f'cogs.{module}')
+            await self.bot.load_extension(f'cogs.{extension}')
         except commands.ExtensionError as e:
             await ctx.send(
                 f'{e.__class__.__name__}: {e}',
                 delete_after=self.delay
             )
+            log.exception(f'Failed to load extension {extension}')
         else:
             await ctx.send(
-                f'Module \'{module}\' loaded.',
+                f'Extension \'{extension}\' loaded.',
                 delete_after=self.delay
             )
+            log.info(f'Successfully loaded extension {extension}')
         await ctx.message.delete(delay=self.delay)
 
     @commands.command(name='unload', hidden=True)
-    async def unload(self, ctx: commands.Context, module: str) -> None:
-        """Unloads a module"""
+    async def unload(self, ctx: commands.Context, extension: str) -> None:
+        """Unloads a extension"""
         try:
-            await self.bot.unload_extension(f'cogs.{module}')
+            await self.bot.unload_extension(f'cogs.{extension}')
         except commands.ExtensionError as e:
             await ctx.send(
                 f'{e.__class__.__name__}: {e}',
                 delete_after=self.delay
             )
+            log.exception(f'Failed to unload extension {extension}')
         else:
             await ctx.send(
-                f'Module \'{module}\' unloaded.',
+                f'Extension \'{extension}\' unloaded.',
                 delete_after=self.delay
             )
+            log.info(f'Successfully unloaded extension {extension}')
         await ctx.message.delete(delay=self.delay)
 
     @commands.command(name='reload', hidden=True)
-    async def reload(self, ctx: commands.Context, module: str) -> None:
-        """Reloads a module"""
+    async def reload(self, ctx: commands.Context, extension: str) -> None:
+        """Reloads a extension"""
         try:
-            await self.bot.reload_extension(f'cogs.{module}')
+            await self.bot.reload_extension(f'cogs.{extension}')
         except commands.ExtensionError as e:
             await ctx.send(
                 f'{e.__class__.__name__}: {e}',
                 delete_after=self.delay
             )
+            log.exception(f'Failed to reload extension {extension}')
         else:
             await ctx.send(
-                f'Module \'{module}\' reloaded.',
+                f'Extension \'{extension}\' reloaded.',
                 delete_after=self.delay
             )
+            log.info(f'Successfully reloaded extension {extension}')
         await ctx.message.delete(delay=self.delay)
 
     @commands.command(name='sync', hidden=True)
@@ -76,9 +85,10 @@ class Owner(commands.Cog):
                 delete_after=self.delay
             )
 
-        commands = await self.bot.tree.sync(guild=guild)
+        commands_sync = await self.bot.tree.sync(guild=guild)
         await ctx.send(
-            f'Successfully synced {len(commands)} commands',
+            f'Successfully synced {len(commands_sync)} commands',
             delete_after=self.delay
         )
+        log.info(f'Successfully synced {len(commands_sync)} commands')
         await ctx.message.delete(delay=self.delay)
