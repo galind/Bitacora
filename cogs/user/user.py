@@ -12,6 +12,7 @@ class TipModal(discord.ui.Modal):
     ) -> None:
         self.sender = sender
         self.receiver = receiver
+        self.name = name
         super().__init__(title=f'Tip {name}', timeout=None)
 
     quantity = discord.ui.TextInput(
@@ -38,7 +39,8 @@ class TipModal(discord.ui.Modal):
             {'balance': receiver_balance + quantity}
         )
         await interaction.response.send_message(
-            'The tip has been sent', ephemeral=True
+            f'The {quantity} coins tip has been sent to {self.name}',
+            ephemeral=True
         )
 
 
