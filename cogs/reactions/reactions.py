@@ -78,7 +78,9 @@ class Reactions(commands.Cog):
             guild_id, channel_id, message_id
         )
         embed.add_field(
-            name='Message', value=f'[Click here]({mesasge_link})', inline=False
+            name='Message',
+            value=f'[[Click here]]({mesasge_link})',
+            inline=False
         )
         return embed
 
