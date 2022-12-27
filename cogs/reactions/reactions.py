@@ -105,7 +105,7 @@ class Reactions(commands.Cog):
         receiver_info = await receiver.check_user()
 
         if sender_info['_id'] == receiver_info['_id']:
-            pass
+            return
 
         await sender.update_user({'timestamp': current_time})
         balance = receiver_info.get('balance', 0)
