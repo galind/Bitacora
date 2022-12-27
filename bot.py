@@ -17,7 +17,9 @@ initial_extensions = files.get_initial_extensions()
 
 class Bitacora(commands.Bot):
     def __init__(self):
-        allowed_mentions = discord.AllowedMentions.all()
+        allowed_mentions = discord.AllowedMentions(
+            everyone=False, users=False, roles=False, replied_user=False
+        )
         intents = discord.Intents.all()
         super().__init__(
             command_prefix=config.prefix,
