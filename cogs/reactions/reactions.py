@@ -116,7 +116,10 @@ class Reactions(commands.Cog):
             return
 
         channel = await self.find_channel(payload.guild_id)
+        content = '||<@{}> <@{}>||'.format(
+            sender_info['_id'], receiver_info['_id']
+        )
         embed = self.add_embed(
             payload.emoji.name, sender_info['_id'], receiver_info['_id']
         )
-        await channel.send(embed=embed)
+        await channel.send(content=content, embed=embed)
