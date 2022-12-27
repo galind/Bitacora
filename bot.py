@@ -39,6 +39,7 @@ class Bitacora(commands.Bot):
         for extension in initial_extensions:
             try:
                 await self.load_extension(extension)
+                log.info(f'Loaded extension {extension}')
             except Exception:
                 log.exception(f'Failed to load extension {extension}.')
 
