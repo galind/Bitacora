@@ -60,7 +60,8 @@ class Reactions(commands.Cog):
         return channel
 
     def add_embed(
-        self, emoji: str, sender_id: int, receiver_id: int
+        self, emoji: str, sender_id: int, receiver_id: int,
+        guild_id: int, channel_id: int, message_id: int
     ) -> discord.Embed:
         embed = discord.Embed(
             title='New Reaction', color=self.bot.color
@@ -73,7 +74,12 @@ class Reactions(commands.Cog):
         embed.add_field(
             name='Receiver', value=f'<@{receiver_id}>', inline=False
         )
-
+        mesasge_link = 'https://discord.com/channels/{}/{}/{}'.format(
+            guild_id, channel_id, message_id
+        )
+        embed.add_field(
+            name='Message', value=f'[Click here]({mesasge_link})', inline=False
+        )
         return embed
 
     @commands.Cog.listener(name='on_raw_reaction_add')
@@ -120,6 +126,11 @@ class Reactions(commands.Cog):
             sender_info['_id'], receiver_info['_id']
         )
         embed = self.add_embed(
-            payload.emoji.name, sender_info['_id'], receiver_info['_id']
+            payload.emoji.name,
+            payload.user_id,
+            receiver_info['_id'],
+            payload.guild_id,
+            payload.channel_id,
+            payload.message_id
         )
         await channel.send(content=content, embed=embed)
