@@ -10,6 +10,60 @@ class Reactions(commands.Cog):
     def __init__(self, bot: Bitacora) -> None:
         self.bot = bot
 
+    def format_hours(self, hours) -> str:
+        if hours == 1:
+            return 'hour'
+        else:
+            return 'hours'
+
+    def format_minutes(self, minutes) -> str:
+        if minutes == 1:
+            return 'minute'
+        else:
+            return 'minutes'
+
+    def format_seconds(self, seconds) -> str:
+        if seconds == 1:
+            return 'second'
+        else:
+            return 'seconds'
+
+    def format_time(self, seconds: int) -> str:
+        content_list = []
+        result = time.gmtime(seconds)
+
+        hours_result = result.tm_hour
+        if hours_result:
+            text = self.format_hours(hours_result)
+            content_list.append(f'{hours_result} {text}')
+
+        minutes_result = result.tm_min
+        if minutes_result:
+            text = self.format_minutes(minutes_result)
+            content_list.append(f'{minutes_result} {text}')
+
+        seconds_result = result.tm_sec
+        if seconds_result:
+            text = self.format_seconds(seconds_result)
+            content_list.append(f'{seconds_result} {text}')
+
+        return ', '.join(content_list)
+
+    async def contact_sender(self, user_id: int, remaining_time: int) -> None:
+        user = self.bot.get_user(user_id)
+        if not user:
+            user = await self.bot.fetch_user(user_id)
+        formatted_time = self.format_time(remaining_time)
+        try:
+            await user.send(
+                f'You need to wait {formatted_time} to send another coin via '
+                'reaction, but you can tip to the user right clicking his '
+                'profile and choosing the option \'Tip to user\' in the '
+                'apps section.'
+            )
+        except Exception:
+            pass
+
     async def find_receiver(self, channel_id: int, message_id: int) -> int:
         channel = self.bot.get_channel(channel_id)
         if not channel:
@@ -31,7 +85,7 @@ class Reactions(commands.Cog):
         if time_difference >= cooldown:
             return True
         else:
-            return False
+            return time_difference
 
     async def find_guild(self, guild_id: int) -> discord.Guild:
         guild = self.bot.get_guild(guild_id)
@@ -102,8 +156,10 @@ class Reactions(commands.Cog):
         cooldown_result = await self.check_cooldown(
             sender_info, cooldown, current_time
         )
-        if cooldown_result is False:
-            return
+        if cooldown_result is not True:
+            return await self.contact_sender(
+                payload.user_id, cooldown - cooldown_result
+            )
 
         receiver_id = await self.find_receiver(
             payload.channel_id, payload.message_id
