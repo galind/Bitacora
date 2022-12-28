@@ -1,6 +1,7 @@
 from discord.ext import commands
 from discord import app_commands
 import discord
+import importlib
 
 from cogs.utils import mongo
 from bot import Bitacora
@@ -24,20 +25,16 @@ class TipModal(discord.ui.Modal):
     async def on_submit(self, interaction: discord.Interaction) -> None:
         quantity = int(self.quantity.value)
         sender_info = await self.sender.check_user()
-        receiver_info = await self.receiver.check_user()
 
         sender_balance = sender_info.get('balance', 0)
-        receiver_balance = receiver_info.get('balance', 0)
 
         if quantity > sender_balance:
             return await interaction.response.send_message(
                 'You don\'t have enough coins in the wallet', ephemeral=True
             )
 
-        await self.sender.update_user({'balance': sender_balance - quantity})
-        await self.receiver.update_user(
-            {'balance': receiver_balance + quantity}
-        )
+        await self.sender.update_user({'balance': -quantity}, method='inc')
+        await self.receiver.update_user({'balance': quantity}, method='inc')
         await interaction.response.send_message(
             f'The {quantity} coins tip has been sent to {self.name}',
             ephemeral=True
@@ -51,6 +48,9 @@ class User(commands.Cog):
             name='Tip to user', callback=self.tip
         )
         self.bot.tree.add_command(self.tip_ctx)
+
+    async def cog_load(self) -> None:
+        importlib.reload(mongo)
 
     async def cog_unload(self) -> None:
         self.bot.tree.remove_command(self.tip_ctx.name, type=self.tip_ctx.type)
@@ -69,7 +69,7 @@ class User(commands.Cog):
         self, interaction: discord.Interaction, member: discord.Member
     ) -> None:
         """Tip coins to another user"""
-        if interaction.user.id != member.id:
+        if interaction.user.id == member.id:
             return await interaction.response.send_message(
                 'You can\'t tip to yourself', ephemeral=True
             )

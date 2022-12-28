@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 import time
+import importlib
 
 from cogs.utils import mongo
 from bot import Bitacora
@@ -9,6 +10,9 @@ from bot import Bitacora
 class Reactions(commands.Cog):
     def __init__(self, bot: Bitacora) -> None:
         self.bot = bot
+
+    async def cog_load(self) -> None:
+        importlib.reload(mongo)
 
     def format_hours(self, hours) -> str:
         if hours == 1:
