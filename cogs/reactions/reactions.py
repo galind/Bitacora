@@ -59,23 +59,22 @@ class Reactions(commands.Cog):
             channel = await self.create_channel(guild)
         return channel
 
-    def add_embed(
-        self, emoji: str, sender_id: int, receiver_id: int,
-        guild_id: int, channel_id: int, message_id: int
+    def new_reaction_embed(
+        self, payload: discord.RawReactionActionEvent, receiver_id: int
     ) -> discord.Embed:
         embed = discord.Embed(
             title='New Reaction', color=self.bot.color
         )
 
-        embed.add_field(name='Emoji', value=emoji, inline=False)
+        embed.add_field(name='Emoji', value=payload.emoji.name, inline=False)
         embed.add_field(
-            name='Sender', value=f'<@{sender_id}>', inline=False
+            name='Sender', value=f'<@{payload.user_id}>', inline=False
         )
         embed.add_field(
             name='Receiver', value=f'<@{receiver_id}>', inline=False
         )
         mesasge_link = 'https://discord.com/channels/{}/{}/{}'.format(
-            guild_id, channel_id, message_id
+            payload.guild_id, payload.channel_id, payload.message_id
         )
         embed.add_field(
             name='Message',
@@ -127,12 +126,5 @@ class Reactions(commands.Cog):
         content = '||<@{}> <@{}>||'.format(
             sender_info['_id'], receiver_info['_id']
         )
-        embed = self.add_embed(
-            payload.emoji.name,
-            payload.user_id,
-            receiver_info['_id'],
-            payload.guild_id,
-            payload.channel_id,
-            payload.message_id
-        )
+        embed = self.add_embed(payload, receiver_info['_id'])
         await channel.send(content=content, embed=embed)
