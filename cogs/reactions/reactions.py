@@ -126,5 +126,5 @@ class Reactions(commands.Cog):
         content = '||<@{}> <@{}>||'.format(
             sender_info['_id'], receiver_info['_id']
         )
-        embed = self.add_embed(payload, receiver_info['_id'])
+        embed = self.new_reaction_embed(payload, receiver_info['_id'])
         await channel.send(content=content, embed=embed)
