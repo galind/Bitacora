@@ -59,7 +59,7 @@ class Reactions(commands.Cog):
             channel = await self.create_channel(guild)
         return channel
 
-    def new_reaction_embed(
+    def reaction_embed(
         self, payload: discord.RawReactionActionEvent, receiver_id: int
     ) -> discord.Embed:
         embed = discord.Embed(
@@ -126,5 +126,5 @@ class Reactions(commands.Cog):
         content = '||<@{}> <@{}>||'.format(
             sender_info['_id'], receiver_info['_id']
         )
-        embed = self.new_reaction_embed(payload, receiver_info['_id'])
+        embed = self.reaction_embed(payload, receiver_info['_id'])
         await channel.send(content=content, embed=embed)
