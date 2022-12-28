@@ -47,6 +47,6 @@ class User:
             user_info = await self.find_user()
         return user_info
 
-    async def update_user(self, query: dict) -> None:
-        set_query = {'$set': query}
+    async def update_user(self, query: dict, method: str = 'set') -> None:
+        set_query = {f'${method}': query}
         await self.guild.update_one(self.query, set_query, upsert=True)
