@@ -63,7 +63,10 @@ class User(commands.Cog):
         )
 
     @app_commands.command(name='tip')
-    @app_commands.describe(user='The user you want to tip')
+    @app_commands.describe(
+        user='The user you want to tip',
+        amount='The amount of coins you want to tip'
+    )
     async def tip(
         self, interaction: discord.Interaction,
         user: discord.User, amount: int
