@@ -175,8 +175,7 @@ class Reactions(commands.Cog):
             return
 
         await sender.update_user({'timestamp': current_time})
-        balance = receiver_info.get('balance', 0)
-        await receiver.update_user({'balance': balance+1})
+        await receiver.update_user({'balance': 1}, method='inc')
 
         logs = guild_config.get('logs', True)
         if not logs:
