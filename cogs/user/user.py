@@ -44,16 +44,13 @@ class TipModal(discord.ui.Modal):
 class User(commands.Cog):
     def __init__(self, bot: Bitacora) -> None:
         self.bot = bot
-        self.tip_ctx = app_commands.ContextMenu(
-            name='Tip to user', callback=self.tip
-        )
-        self.bot.tree.add_command(self.tip_ctx)
 
     async def cog_load(self) -> None:
         importlib.reload(mongo)
 
-    async def cog_unload(self) -> None:
-        self.bot.tree.remove_command(self.tip_ctx.name, type=self.tip_ctx.type)
+    @app_commands.command(name='help')
+    async def help(self, interaction: discord.Interaction) -> None:
+        """Check out how to use the bot"""
 
     @app_commands.command(name='wallet')
     async def balance(self, interaction: discord.Interaction) -> None:
@@ -65,19 +62,29 @@ class User(commands.Cog):
             f'You have {balance} coins in the wallet', ephemeral=True
         )
 
+    @app_commands.command(name='tip')
+    @app_commands.describe(user='The user you want to tip')
     async def tip(
-        self, interaction: discord.Interaction, member: discord.Member
+        self, interaction: discord.Interaction,
+        user: discord.User, amount: int
     ) -> None:
         """Tip coins to another user"""
-        if interaction.user.id == member.id:
+        if interaction.user.id == user.id:
             return await interaction.response.send_message(
                 'You can\'t tip to yourself', ephemeral=True
             )
 
-        guild_id = interaction.guild_id
-        sender = mongo.User(guild_id, interaction.user.id)
-        receiver = mongo.User(guild_id, member.id)
+        sender = mongo.User(interaction.guild_id, interaction.user.id)
+        receiver = mongo.User(interaction.guild_id, user.id)
 
-        receiver_name = f'{member.name}#{member.discriminator}'
-        modal = TipModal(sender, receiver, receiver_name)
-        await interaction.response.send_modal(modal)
+        sender_info = await sender.check_user()
+        if amount > sender_info.get('balance', 0):
+            return await interaction.response.send_message(
+                'You don\'t have enough coins in the wallet', ephemeral=True
+            )
+
+        await sender.update_user({'balance': -amount}, method='inc')
+        await receiver.update_user({'balance': amount}, method='inc')
+        await interaction.response.send_message(
+            f'The {amount} coins tip has been sent', ephemeral=True
+        )
