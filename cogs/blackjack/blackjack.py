@@ -31,37 +31,69 @@ suits = [
 ]
 
 
-def start_game(name, balance, bet) -> discord.Embed:
+def start_game(balance: int, bet: int = 0) -> discord.Embed:
     embed = discord.Embed(
-        title=f'{name}\'s blackjack game', color=Bitacora().color
+        title=f'Blackjack game', color=Bitacora().color
     )
     embed.add_field(name='Coins in the wallet', value=balance, inline=False)
     embed.add_field(name='Current bet', value=bet, inline=False)
     return embed
 
 
-class StartGame(discord.ui.View):
-    def __init__(self, bot: Bitacora):
+class RaiseBetButton(discord.ui.Button):
+    def __init__(self, bot: Bitacora, balance: int, bet: int) -> None:
         self.bot = bot
+        self.balance = balance
+        self.bet = bet
+        super().__init__(
+            label='Raise bet',
+            style=discord.ButtonStyle.success,
+            disabled=(bet == balance),
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        self.bet += 1
+        embed = start_game(self.balance, self.bet)
+        view = BetView(self.bot, self.balance, self.bet)
+        await interaction.response.edit_message(embed=embed, view=view)
+
+
+class LowerBetButton(discord.ui.Button):
+    def __init__(self, bot: Bitacora, balance: int, bet: int) -> None:
+        self.bot = bot
+        self.balance = balance
+        self.bet = bet
+        super().__init__(
+            label='Lower bet',
+            style=discord.ButtonStyle.danger,
+            disabled=(bet == 0)
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        self.bet -= 1
+        embed = start_game(self.balance, self.bet)
+        view = BetView(self.bot, self.balance, self.bet)
+        await interaction.response.edit_message(embed=embed, view=view)
+
+
+class StartGameButton(discord.ui.Button):
+    def __init__(self, bot: Bitacora, balance: int, bet: int) -> None:
+        self.bot = bot
+        self.balance = balance
+        self.bet = bet
+        super().__init__(
+            label='Start game',
+            style=discord.ButtonStyle.primary,
+            disabled=(bet == 0)
+        )
+
+
+class BetView(discord.ui.View):
+    def __init__(self, bot: Bitacora, balance: int, bet: int = 0):
         super().__init__(timeout=None)
-
-    @discord.ui.button(label='Start game', style=discord.ButtonStyle.primary)
-    async def start_game(
-        self, interaction: discord.Interaction, button: discord.Button
-    ):
-        pass
-
-    @discord.ui.button(label='Raise bet', style=discord.ButtonStyle.success)
-    async def raise_bet(
-        self, interaction: discord.Interaction, button: discord.Button
-    ):
-        pass
-
-    @discord.ui.button(label='Lower bet', style=discord.ButtonStyle.danger)
-    async def lower_bet(
-        self, interaction: discord.Interaction, button: discord.Button
-    ):
-        pass
+        self.add_item(RaiseBetButton(bot, balance, bet))
+        self.add_item(LowerBetButton(bot, balance, bet))
+        self.add_item(StartGameButton(bot, balance, bet))
 
 
 class Blackjack(commands.Cog):
@@ -84,8 +116,8 @@ class Blackjack(commands.Cog):
                 'Your wallet is empty, you need coins to play', ephemeral=True
             )
 
-        embed = start_game(interaction.user.name, balance, 0)
-        view = StartGame(self.bot)
+        embed = start_game(balance)
+        view = BetView(self.bot, balance)
         await interaction.response.send_message(
             embed=embed, view=view, ephemeral=True
         )
