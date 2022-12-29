@@ -31,9 +31,9 @@ suits = [
 ]
 
 
-def start_game(balance: int, bet: int = 0) -> discord.Embed:
+def choose_bet(balance: int, bet: int = 0) -> discord.Embed:
     embed = discord.Embed(
-        title=f'Blackjack game', color=Bitacora().color
+        title='Blackjack game', color=Bitacora().color
     )
     embed.add_field(name='Coins in the wallet', value=balance, inline=False)
     embed.add_field(name='Current bet', value=bet, inline=False)
@@ -53,8 +53,8 @@ class RaiseBetButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction) -> None:
         self.bet += 1
-        embed = start_game(self.balance, self.bet)
-        view = BetView(self.bot, self.balance, self.bet)
+        embed = choose_bet(self.balance, self.bet)
+        view = ChooseBetView(self.bot, self.balance, self.bet)
         await interaction.response.edit_message(embed=embed, view=view)
 
 
@@ -71,8 +71,8 @@ class LowerBetButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction) -> None:
         self.bet -= 1
-        embed = start_game(self.balance, self.bet)
-        view = BetView(self.bot, self.balance, self.bet)
+        embed = choose_bet(self.balance, self.bet)
+        view = ChooseBetView(self.bot, self.balance, self.bet)
         await interaction.response.edit_message(embed=embed, view=view)
 
 
@@ -88,7 +88,7 @@ class StartGameButton(discord.ui.Button):
         )
 
 
-class BetView(discord.ui.View):
+class ChooseBetView(discord.ui.View):
     def __init__(self, bot: Bitacora, balance: int, bet: int = 0):
         super().__init__(timeout=None)
         self.add_item(RaiseBetButton(bot, balance, bet))
@@ -116,8 +116,8 @@ class Blackjack(commands.Cog):
                 'Your wallet is empty, you need coins to play', ephemeral=True
             )
 
-        embed = start_game(balance)
-        view = BetView(self.bot, balance)
+        embed = choose_bet(balance)
+        view = ChooseBetView(self.bot, balance)
         await interaction.response.send_message(
             embed=embed, view=view, ephemeral=True
         )
